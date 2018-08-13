@@ -18,14 +18,15 @@ public class SSLServer {
             System.setProperty("javax.net.debug", "all");
             KeyStore keyStore = KeyStore.getInstance("PKCS12");
             String password = "abcdefg";
-            InputStream inputStream = ClassLoader.getSystemClassLoader().getResourceAsStream("server/certificate.p12");
+            InputStream inputStream = ClassLoader.getSystemClassLoader().getResourceAsStream("server/certificate-server.p12");
             keyStore.load(inputStream, password.toCharArray());
 
             // TrustManagerFactory
+            String password2 = "aabbcc";
             KeyStore trustStore = KeyStore.getInstance("PKCS12");
             TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance("PKIX", "SunJSSE");
-            InputStream inputStream1 = ClassLoader.getSystemClassLoader().getResourceAsStream("client/cert-and-key.p12");
-            trustStore.load(inputStream1, password.toCharArray());
+            InputStream inputStream1 = ClassLoader.getSystemClassLoader().getResourceAsStream("client/certificate-client.p12");
+            trustStore.load(inputStream1, password2.toCharArray());
             trustManagerFactory.init(trustStore);
             X509TrustManager x509TrustManager = null;
             for (TrustManager trustManager : trustManagerFactory.getTrustManagers()) {
@@ -56,7 +57,7 @@ public class SSLServer {
 
             SSLServerSocketFactory serverSocketFactory = sslContext.getServerSocketFactory();
             SSLServerSocket serverSocket = (SSLServerSocket) serverSocketFactory.createServerSocket(8333);
-            serverSocket.setNeedClientAuth(false);
+            serverSocket.setNeedClientAuth(true);
             serverSocket.setEnabledProtocols(new String[]{"TLSv1.2"});
             SSLSocket socket = (SSLSocket) serverSocket.accept();
 
